@@ -23,7 +23,7 @@
             </div>
             
             {% if booking.status == 'Мероприятие завершено' %}
-                <div class="review-section mt-3 pt-3 border-top">
+                <div class="review-section mt-3 pt-3">
                     {% if booking.review %}
                         <div>
                             <h6>Ваш отзыв:</h6>
@@ -32,7 +32,7 @@
                                     {% if forloop.counter <= booking.review.rating %}⭐{% else %}☆{% endif %}
                                 {% endfor %}
                             </div>
-                            <p>{{ booking.review.comment }}</p>
+                            <p class="text-muted">{{ booking.review.comment }}</p>
                         </div>
                     {% else %}
                         <button class="btn btn-sm btn-outline-primary btn-review-trigger" data-booking-id="{{ booking.id }}">
@@ -92,4 +92,27 @@
         <a href="{% url 'create_booking' %}" class="btn btn-primary">Создать бронирование</a>
     </div>
 {% endif %}
+
+<style>
+    .feature-card {
+        padding: 1.5rem;
+        transition: transform 0.3s;
+        background: #FFFFFF;
+        border-radius: 15px;
+        margin-bottom: 1rem;
+    }
+    .feature-card:hover {
+        transform: translateY(-5px);
+    }
+    .feature-icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+    .feature-card h4 {
+        font-size: 18px;
+        font-weight: 600;
+        color: #28A745;
+        margin-bottom: 0.5rem;
+    }
+</style>
 {% endblock %}

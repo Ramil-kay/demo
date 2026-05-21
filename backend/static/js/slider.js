@@ -1,16 +1,12 @@
-/**
- * Слайдер для главной страницы
- * Автоматическая смена изображений каждые 3 секунды
- * Поддержка кнопок "Вперед" и "Назад"
- */
+
 
 (function() {
-    // Проверяем наличие слайдера на странице
     const sliderContainer = document.querySelector('.slider-container');
     if (!sliderContainer) return;
     
     let currentSlide = 0;
     let autoSlideInterval;
+    let isPaused = false;
     const slides = document.querySelectorAll('.slide');
     
     if (slides.length === 0) return;
@@ -40,22 +36,31 @@
      * Переключение на следующий слайд
      */
     function nextSlide() {
-        showSlide(currentSlide + 1);
+        if (!isPaused) {
+            showSlide(currentSlide + 1);
+        }
     }
     
     /**
      * Переключение на предыдущий слайд
      */
     function prevSlide() {
-        showSlide(currentSlide - 1);
+        if (!isPaused) {
+            showSlide(currentSlide - 1);
+            resetTimer(); // Сбрасываем таймер при ручном переключении
+        }
     }
     
     /**
-     * Запуск автоматической смены слайдов
+     * Запуск автоматической смены слайдов (каждые 3 секунды)
      */
     function startAutoSlide() {
         stopAutoSlide(); // Останавливаем предыдущий интервал
-        autoSlideInterval = setInterval(nextSlide, 3000);
+        autoSlideInterval = setInterval(() => {
+            if (!isPaused) {
+                showSlide(currentSlide + 1);
+            }
+        }, 3000); // 3000 миллисекунд = 3 секунды
     }
     
     /**
@@ -72,7 +77,24 @@
      * Сброс таймера при взаимодействии пользователя
      */
     function resetTimer() {
-        startAutoSlide();
+        if (autoSlideInterval) {
+            stopAutoSlide();
+            startAutoSlide();
+        }
+    }
+    
+    /**
+     * Пауза при наведении
+     */
+    function pauseSlider() {
+        isPaused = true;
+    }
+    
+    /**
+     * Возобновление при уходе мыши
+     */
+    function resumeSlider() {
+        isPaused = false;
     }
     
     // Создаем точки навигации (dots)
@@ -99,33 +121,40 @@
         const nextBtn = document.getElementById('sliderNext');
         
         if (prevBtn) {
-            prevBtn.addEventListener('click', () => {
+            prevBtn.addEventListener('click', (e) => {
+                e.preventDefault();
                 prevSlide();
                 resetTimer();
             });
         }
         
         if (nextBtn) {
-            nextBtn.addEventListener('click', () => {
+            nextBtn.addEventListener('click', (e) => {
+                e.preventDefault();
                 nextSlide();
                 resetTimer();
             });
         }
     }
     
+    // Добавляем обработчики для паузы при наведении
+    function addHoverHandlers() {
+        sliderContainer.addEventListener('mouseenter', pauseSlider);
+        sliderContainer.addEventListener('mouseleave', resumeSlider);
+        
+        // Для мобильных устройств - пауза при касании
+        sliderContainer.addEventListener('touchstart', pauseSlider);
+        sliderContainer.addEventListener('touchend', () => {
+            setTimeout(resumeSlider, 3000); // Возобновляем через 3 секунды после касания
+        });
+    }
+    
     // Инициализация
     function initSlider() {
         createDots();
         addButtonHandlers();
-        startAutoSlide();
-        
-        // Останавливаем автосмену при наведении на слайдер
-        sliderContainer.addEventListener('mouseenter', stopAutoSlide);
-        sliderContainer.addEventListener('mouseleave', startAutoSlide);
-        
-        // Для мобильных устройств
-        sliderContainer.addEventListener('touchstart', stopAutoSlide);
-        sliderContainer.addEventListener('touchend', startAutoSlide);
+        addHoverHandlers();
+        startAutoSlide(); // Запускаем автопереключение каждые 3 секунды
     }
     
     // Запускаем слайдер после загрузки DOM

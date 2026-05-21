@@ -59,7 +59,7 @@ def logout_view(request):
     return redirect('login')
 
 @login_required
-def home(request):
+def index_view(request):
     halls = Hall.objects.all()
     
     if not halls.exists():
@@ -77,6 +77,40 @@ def home(request):
         halls = Hall.objects.all()
     
     return render(request, 'index.html', {'halls': halls})
+
+@login_required
+def profile_view(request):
+    """Личный кабинет пользователя"""
+    try:
+        user_profile = request.user.profile
+    except UserProfile.DoesNotExist:
+        user_profile = UserProfile.objects.create(
+            user=request.user,
+            full_name=request.user.get_full_name() or request.user.username,
+            phone='8(000)000-00-00'  
+        )
+    
+    user_bookings = Booking.objects.filter(user=request.user)
+    total_bookings = user_bookings.count()
+    
+    # Статистика по статусам
+    new_bookings = user_bookings.filter(status='Новая').count()
+    scheduled_bookings = user_bookings.filter(status='Мероприятие назначено').count()
+    completed_bookings = user_bookings.filter(status='Мероприятие завершено').count()
+    
+    # Последние 5 бронирований
+    recent_bookings = user_bookings[:5]
+    
+    context = {
+        'user_profile': user_profile,
+        'total_bookings': total_bookings,
+        'new_bookings': new_bookings,
+        'scheduled_bookings': scheduled_bookings,
+        'completed_bookings': completed_bookings,
+        'recent_bookings': recent_bookings,
+    }
+    
+    return render(request, 'profile.html', context)
 
 @login_required
 def bookings_view(request):
@@ -128,44 +162,3 @@ def create_booking_view(request):
         form = BookingForm()
     
     return render(request, 'create_booking.html', {'form': form})
-
-@login_required
-def admin_panel_view(request):
-    # Проверка на администратора (логин Admin26, пароль Demo20)
-    if not (request.user.username == 'Admin26' and request.user.check_password('Demo20')):
-        messages.error(request, 'Доступ запрещен. Только для администратора.')
-        return redirect('index')
-    
-    status_filter = request.GET.get('status', '')
-    hall_filter = request.GET.get('hall', '')
-    
-    bookings = Booking.objects.select_related('user', 'user__profile', 'hall').all()
-    
-    if status_filter:
-        bookings = bookings.filter(status=status_filter)
-    if hall_filter:
-        bookings = bookings.filter(hall__name=hall_filter)
-    
-    paginator = Paginator(bookings, 10)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    
-    if request.method == 'POST':
-        booking_id = request.POST.get('booking_id')
-        new_status = request.POST.get('status')
-        booking = get_object_or_404(Booking, id=booking_id)
-        booking.status = new_status
-        booking.save()
-        messages.success(request, f'Статус бронирования #{booking_id} изменен на "{new_status}"')
-        return redirect('admin_panel')
-    
-    halls = Hall.objects.all()
-    statuses = ['Новая', 'Мероприятие назначено', 'Мероприятие завершено']
-    
-    return render(request, 'admin_panel.html', {
-        'bookings': page_obj,
-        'halls': halls,
-        'statuses': statuses,
-        'current_status': status_filter,
-        'current_hall': hall_filter,
-    })

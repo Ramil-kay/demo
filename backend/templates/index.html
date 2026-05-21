@@ -5,7 +5,7 @@
 
 {% block content %}
 <div class="hero-section fade-in">
-    <h1>🏛️ Конференции.РФ</h1>
+    <h1><img src="{% static 'media/quality_icon5.png' %}" alt=""> Конференции.РФ</h1>
     <p class="lead">Бронирование помещений для Всероссийских конференций</p>
     {% if user.is_authenticated %}
         <a href="{% url 'create_booking' %}" class="btn btn-light btn-lg pulse">📅 Забронировать помещение</a>
@@ -17,19 +17,19 @@
 <div class="slider-container fade-in-up">
     <div class="slider" id="mainSlider">
         <div class="slide active">
-            <img src="{% static 'images/slide1.jpg' %}" alt="Конференц-зал">
+            <img src="{% static 'images/image (1).jpeg' %}" alt="Конференц-зал">
             <div class="slide-caption">Современные конференц-залы</div>
         </div>
         <div class="slide">
-            <img src="{% static 'images/slide2.jpg' %}" alt="Коворкинг">
+            <img src="{% static 'images/image (2).jpeg' %}" alt="Коворкинг">
             <div class="slide-caption">Уютные коворкинги</div>
         </div>
         <div class="slide">
-            <img src="{% static 'images/slide3.jpg' %}" alt="Кинозал">
+            <img src="{% static 'images/image (3).jpeg' %}" alt="Кинозал">
             <div class="slide-caption">Профессиональные кинозалы</div>
         </div>
         <div class="slide">
-            <img src="{% static 'images/slide4.jpg' %}" alt="Помещения">
+            <img src="{% static 'images/image (4).jpeg' %}" alt="Помещения">
             <div class="slide-caption">Лучшие условия для конференций</div>
         </div>
     </div>
@@ -39,14 +39,14 @@
 </div>
 
 <div class="halls-section my-5">
-    <h2 class="text-center mb-4 fade-in-up">Доступные помещения</h2>
+    <h2 class="text-center text-white mb-4 fade-in-up">Доступные помещения</h2>
     <div class="row">
         {% for hall in halls %}
             <div class="col-md-4 fade-in-up">
                 <div class="hall-card">
-                    <div class="text-center mb-3">🏢</div>
+                    <div class="text-center mb-3"><img src="{% static 'media/quality_icon8.png' %}" alt=""></div>
                     <h3 class="text-center">{{ hall.name }}</h3>
-                    <p class="text-muted small text-center">{{ hall.description|default:"Помещение для конференций" }}</p>
+                    <p class="text-muted text-center">{{ hall.description|default:"Помещение для конференций" }}</p>
                     <p class="text-center">👥 Вместимость: {{ hall.capacity }} чел.</p>
                     <p class="text-center">💰 {{ hall.price_per_hour }} ₽/час</p>
                     <div class="text-center">
@@ -59,6 +59,30 @@
                 </div>
             </div>
         {% endfor %}
+    </div>
+</div>
+
+<div class="row mt-5 pt-4 fade-in-up">
+    <div class="col-md-4 text-center">
+        <div class="feature-card">
+            <div class="feature-icon">🎯</div>
+            <h4 class="text-white">Актуальные знания</h4>
+            <p class="text-white">Современные методики проведения конференций</p>
+        </div>
+    </div>
+    <div class="col-md-4 text-center">
+        <div class="feature-card">
+            <div class="feature-icon">👨‍🏫</div>
+            <h4 class="text-white">Профессионализм</h4>
+            <p class="text-white">Высококвалифицированные организаторы</p>
+        </div>
+    </div>
+    <div class="col-md-4 text-center">
+        <div class="feature-card">
+            <div class="feature-icon">🏆</div>
+            <h4 class="text-white">Качество</h4>
+            <p class="text-white">Лучшие площадки для мероприятий</p>
+        </div>
     </div>
 </div>
 {% endblock %}

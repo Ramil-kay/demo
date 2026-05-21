@@ -5,47 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>{% block title %}Конференции.РФ{% endblock %}</title>
     
-    <!-- Локальный Bootstrap 5 CSS -->
-    {% load django_bootstrap5 %}
-    {% bootstrap_css %}
-    
-    <!-- Локальные шрифты -->
+    <!-- Локальный Bootstrap 5 CSS -->   
+     {% load django_bootstrap5 %}
+     {% bootstrap_css %}
+
+    <!-- Локальные шрифты Roboto -->
     {% load static %}
     <style>
         @font-face {
             font-family: 'Roboto';
-            src: url('{% static "fonts/Roboto-Regular.ttf" %}') format('truetype');
-            font-weight: 400;
+            src: url('{% static "fonts/Roboto-VariableFont_wdth,wght.ttf" %}') format('truetype');
+            font-weight: 100 900;
             font-style: normal;
         }
         @font-face {
             font-family: 'Roboto';
-            src: url('{% static "fonts/Roboto-Light.ttf" %}') format('truetype');
-            font-weight: 300;
-            font-style: normal;
+            src: url('{% static "fonts/Roboto-Italic-VariableFont_wdth,wght.ttf" %}') format('truetype');
+            font-weight: 100 900;
+            font-style: italic;
         }
-        @font-face {
-            font-family: 'Roboto';
-            src: url('{% static "fonts/Roboto-Medium.ttf" %}') format('truetype');
-            font-weight: 500;
-            font-style: normal;
-        }
-        @font-face {
-            font-family: 'Roboto';
-            src: url('{% static "fonts/Roboto-Bold.ttf" %}') format('truetype');
-            font-weight: 700;
-            font-style: normal;
+        body {
+            font-family: 'Roboto', sans-serif;
         }
     </style>
     
-    <!-- Подключение отдельного CSS файла -->
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <!-- Подключение CSS -->
+    <link rel="stylesheet" href="{% static 'style/style.css' %}">
 </head>
 <body>
     <nav class="navbar navbar-expand-lg">
         <div class="container">
             <a class="navbar-brand" href="{% url 'index' %}">
-                <span class="brand-icon">🏛️</span>
+                <img src="{% static 'media/quality_icon10.png' %}" alt="">
                 <span class="brand-text">Конференции.РФ</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -55,9 +46,10 @@
                 <ul class="navbar-nav ms-auto">
                     {% if user.is_authenticated %}
                         <li class="nav-item"><span class="nav-link user-greeting">👋 Привет, {{ user.username }}</span></li>
-                        {% if user.username == 'Admin26' %}
-                            <li class="nav-item"><a class="nav-link" href="{% url 'admin_panel' %}">👑 Панель администратора</a></li>
+                        {% if user.is_superuser or user.username == 'Admin26' %}
+                            <li class="nav-item"><a class="nav-link" href="/admin/">👑 Админ-панель</a></li>
                         {% endif %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'profile' %}">👤 Личный кабинет</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'bookings' %}">📋 Мои бронирования</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'create_booking' %}">➕ Новое бронирование</a></li>
                         <li class="nav-item"><a class="nav-link logout-btn" href="{% url 'logout' %}">🚪 Выйти</a></li>
@@ -88,13 +80,12 @@
     <footer>
         <div class="container">
             <p>&copy; 2026 Конференции.РФ - Бронирование помещений для конференций</p>
+            <img src="{% static 'media/soc.png' %}" alt="социальные сети">
         </div>
     </footer>
 
-    <!-- Локальный Bootstrap 5 JS -->
-    {% bootstrap_javascript %}
     
-    <!-- Подключение отдельных JS файлов -->
+    <!-- Подключение JS файлов -->
     <script src="{% static 'js/slider.js' %}"></script>
     <script src="{% static 'js/reviews.js' %}"></script>
 </body>

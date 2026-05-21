@@ -1,6 +1,4 @@
-
-/* Общие стили */
-* {
+ * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -16,7 +14,7 @@ body {
     line-height: 1.5;
 }
 
-/* Навигация - переопределяем Bootstrap стили */
+/* Навигация */
 .navbar {
     background: #FFFFFF !important;
     box-shadow: 0 2px 20px rgba(0,0,0,0.1);
@@ -99,6 +97,23 @@ body {
     margin-bottom: 2rem;
 }
 
+/* Заголовки */
+h1 {
+    font-size: 36px;
+    font-weight: 700;
+    color: #28A745;
+}
+
+h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #343A40;
+}
+
+h3, h4, h5, h6 {
+    font-weight: 600;
+}
+
 /* Карточки помещений */
 .hall-card {
     background: #FFFFFF;
@@ -163,7 +178,7 @@ body {
     color: #FFFFFF;
 }
 
-/* Кнопки - переопределяем Bootstrap */
+/* Кнопки */
 .btn-primary {
     background: #28A745 !important;
     border: none !important;
@@ -204,7 +219,7 @@ body {
     color: #FFFFFF !important;
 }
 
-/* Формы - переопределяем Bootstrap */
+/* Формы */
 .form-control, .form-select {
     border: 1px solid #CED4DA;
     border-radius: 10px;
@@ -268,7 +283,7 @@ footer {
 }
 
 footer p {
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 300;
     margin: 0;
 }
@@ -315,6 +330,8 @@ footer p {
     color: white;
     padding: 1rem;
     text-align: center;
+    font-size: 12px;
+    font-weight: 300;
 }
 
 .slider-btn {
@@ -463,6 +480,11 @@ footer p {
     .slider {
         height: 250px;
     }
+    
+    .slide-caption {
+        font-size: 10px;
+        padding: 0.5rem;
+    }
 }
 
 /* Скрытые элементы */
@@ -500,4 +522,194 @@ footer p {
         transform: scale(1);
         box-shadow: 0 0 0 0 rgba(40,167,69,0);
     }
+}
+
+/* Карточка */
+.card {
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+    background: #FFFFFF;
+}
+
+.card-header {
+    background: #28A745;
+    color: white;
+    font-weight: 600;
+    padding: 1rem;
+    font-size: 16px;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* Текст */
+.text-muted {
+    color: #6c757d !important;
+    font-size: 12px;
+    font-weight: 300;
+}
+
+.small, small {
+    font-size: 12px;
+    font-weight: 300;
+}
+.avatar-circle {
+    width: 80px;
+    height: 80px;
+    background: #28A745;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    font-size: 36px;
+    font-weight: 700;
+    color: white;
+}
+
+.stat-card {
+    background: #FFFFFF;
+    border-radius: 15px;
+    padding: 1rem;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transition: transform 0.3s;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+}
+
+.stat-number {
+    font-size: 28px;
+    font-weight: 700;
+    color: #28A745;
+}
+
+.stat-label {
+    font-size: 12px;
+    font-weight: 300;
+    color: #343A40;
+    margin-top: 0.25rem;
+}
+
+.status-new .stat-number {
+    color: #ffc107;
+}
+
+.status-scheduled .stat-number {
+    color: #17a2b8;
+}
+
+.status-completed .stat-number {
+    color: #28A745;
+}
+
+.quick-action {
+    text-decoration: none;
+    color: #343A40;
+    display: block;
+    padding: 1rem;
+    border-radius: 10px;
+    transition: all 0.3s;
+}
+
+.quick-action:hover {
+    background: rgba(40,167,69,0.1);
+    color: #28A745;
+}
+
+.quick-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.table th {
+    font-size: 14px;
+    font-weight: 600;
+    color: #343A40;
+}
+
+.table td {
+    font-size: 14px;
+    font-weight: 400;
+    vertical-align: middle;
+}
+
+@media (max-width: 768px) {
+    .stat-number {
+        font-size: 22px;
+    }
+    .avatar-circle {
+        width: 60px;
+        height: 60px;
+        font-size: 28px;
+    }
+    .quick-icon {
+        font-size: 1.5rem;
+    }
+}
+
+
+/* Фиксация footer внизу */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+footer {
+    flex-shrink: 0;
+    background: #343A40;
+    color: #FFFFFF;
+    text-align: center;
+    padding: 1.5rem;
+    margin-top: 2rem;
+}
+
+footer p {
+    font-size: 12px;
+    font-weight: 300;
+    margin: 0;
+}
+
+/* Стили для валидации форм */
+.form-control.is-valid {
+    border-color: #28A745;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%2328A745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+.form-control.is-invalid {
+    border-color: #dc3545;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+.invalid-feedback {
+    font-size: 12px;
+    margin-top: 0.25rem;
+    color: #dc3545;
+}
+
+.text-muted {
+    font-size: 11px;
+    margin-top: 0.25rem;
+    display: block;
 }

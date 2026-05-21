@@ -8,6 +8,7 @@ class RegistrationForm(forms.Form):
         max_length=150,
         min_length=6,
         label='Логин',
+        # Валидация
         validators=[
             RegexValidator(regex=r'^[a-zA-Z0-9]+$', message='Логин должен содержать только латиницу и цифры'),
             MinLengthValidator(6)
