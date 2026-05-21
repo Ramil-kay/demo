@@ -1,12 +1,14 @@
 
 
 (function() {
+    // Проверяем наличие слайдера на странице
     const sliderContainer = document.querySelector('.slider-container');
     if (!sliderContainer) return;
     
     let currentSlide = 0;
     let autoSlideInterval;
     let isPaused = false;
+    let isTransitioning = false; // Флаг для предотвращения множественных переходов
     const slides = document.querySelectorAll('.slide');
     
     if (slides.length === 0) return;
@@ -16,6 +18,11 @@
      * @param {number} n - индекс слайда
      */
     function showSlide(n) {
+        // Предотвращаем множественные вызовы во время анимации
+        if (isTransitioning) return;
+        
+        isTransitioning = true;
+        
         // Убираем активный класс у всех слайдов
         slides.forEach(slide => slide.classList.remove('active'));
         
@@ -30,37 +37,40 @@
         dots.forEach((dot, i) => {
             dot.classList.toggle('active', i === currentSlide);
         });
+        
+        // Снимаем флаг блокировки через время анимации
+        setTimeout(() => {
+            isTransitioning = false;
+        }, 500);
     }
     
     /**
      * Переключение на следующий слайд
      */
     function nextSlide() {
-        if (!isPaused) {
-            showSlide(currentSlide + 1);
-        }
+        if (isTransitioning) return;
+        showSlide(currentSlide + 1);
     }
     
     /**
      * Переключение на предыдущий слайд
      */
     function prevSlide() {
-        if (!isPaused) {
-            showSlide(currentSlide - 1);
-            resetTimer(); // Сбрасываем таймер при ручном переключении
-        }
+        if (isTransitioning) return;
+        showSlide(currentSlide - 1);
     }
     
     /**
      * Запуск автоматической смены слайдов (каждые 3 секунды)
      */
     function startAutoSlide() {
-        stopAutoSlide(); // Останавливаем предыдущий интервал
+        stopAutoSlide();
         autoSlideInterval = setInterval(() => {
-            if (!isPaused) {
+            // Автопереключение работает только если не наведена мышь и не в процессе перехода
+            if (!isPaused && !isTransitioning) {
                 showSlide(currentSlide + 1);
             }
-        }, 3000); // 3000 миллисекунд = 3 секунды
+        }, 3000);
     }
     
     /**
@@ -77,10 +87,8 @@
      * Сброс таймера при взаимодействии пользователя
      */
     function resetTimer() {
-        if (autoSlideInterval) {
-            stopAutoSlide();
-            startAutoSlide();
-        }
+       
+        startAutoSlide();
     }
     
     /**
@@ -107,9 +115,13 @@
             const dot = document.createElement('div');
             dot.classList.add('dot');
             if (i === 0) dot.classList.add('active');
-            dot.addEventListener('click', () => {
-                showSlide(i);
-                resetTimer();
+            dot.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (!isTransitioning) {
+                    showSlide(i);
+                    resetTimer();
+                }
             });
             dotsContainer.appendChild(dot);
         });
@@ -121,31 +133,63 @@
         const nextBtn = document.getElementById('sliderNext');
         
         if (prevBtn) {
-            prevBtn.addEventListener('click', (e) => {
+            // Удаляем старые обработчики, чтобы не было дублирования
+            const newPrevBtn = prevBtn.cloneNode(true);
+            prevBtn.parentNode.replaceChild(newPrevBtn, prevBtn);
+            
+            newPrevBtn.addEventListener('click', (e) => {
                 e.preventDefault();
-                prevSlide();
-                resetTimer();
+                e.stopPropagation();
+                if (!isTransitioning) {
+                    prevSlide();
+                    resetTimer();
+                }
+                return false;
             });
         }
         
         if (nextBtn) {
-            nextBtn.addEventListener('click', (e) => {
+            // Удаляем старые обработчики, чтобы не было дублирования
+            const newNextBtn = nextBtn.cloneNode(true);
+            nextBtn.parentNode.replaceChild(newNextBtn, nextBtn);
+            
+            newNextBtn.addEventListener('click', (e) => {
                 e.preventDefault();
-                nextSlide();
-                resetTimer();
+                e.stopPropagation();
+                if (!isTransitioning) {
+                    nextSlide();
+                    resetTimer();
+                }
+                return false;
             });
         }
     }
     
     // Добавляем обработчики для паузы при наведении
     function addHoverHandlers() {
+        // Останавливаем автопереключение при наведении на слайдер
         sliderContainer.addEventListener('mouseenter', pauseSlider);
         sliderContainer.addEventListener('mouseleave', resumeSlider);
         
-        // Для мобильных устройств - пауза при касании
+        // Для мобильных устройств
         sliderContainer.addEventListener('touchstart', pauseSlider);
         sliderContainer.addEventListener('touchend', () => {
-            setTimeout(resumeSlider, 3000); // Возобновляем через 3 секунды после касания
+            setTimeout(resumeSlider, 3000);
+        });
+    }
+    
+    // Добавляем поддержку клавиатуры
+    function addKeyboardSupport() {
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                prevSlide();
+                resetTimer();
+            } else if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                nextSlide();
+                resetTimer();
+            }
         });
     }
     
@@ -154,10 +198,11 @@
         createDots();
         addButtonHandlers();
         addHoverHandlers();
-        startAutoSlide(); // Запускаем автопереключение каждые 3 секунды
+        addKeyboardSupport();
+        startAutoSlide();
     }
     
-    // Запускаем слайдер после загрузки DOM
+    // Запускаем слайдер после полной загрузки DOM
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initSlider);
     } else {
