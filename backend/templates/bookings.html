@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Мои бронирования - Конференции.РФ{% endblock %}
+
+{% block content %}
+<h1 class="text-center mb-4 fade-in">📋 Мои бронирования</h1>
+
+{% if bookings %}
+    {% for booking in bookings %}
+        <div class="booking-card slide-in">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <h5 class="mb-0">Бронирование #{{ booking.id }}</h5>
+                <span class="booking-status status-{{ booking.status|slugify }}">{{ booking.status }}</span>
+            </div>
+            <div class="row">
+                <div class="col-md-6"><p><strong>🏢 Помещение:</strong> {{ booking.hall.name }}</p></div>
+                <div class="col-md-6"><p><strong>📅 Дата:</strong> {{ booking.event_date|date:"d.m.Y" }}</p></div>
+                <div class="col-md-6"><p><strong>⏰ Время начала:</strong> {{ booking.start_time|time:"H:i" }}</p></div>
+                <div class="col-md-6"><p><strong>⏱ Длительность:</strong> {{ booking.duration_hours }} ч.</p></div>
+                <div class="col-md-6"><p><strong>💳 Способ оплаты:</strong> {{ booking.get_payment_method_display }}</p></div>
+                <div class="col-md-6"><p><strong>📅 Создано:</strong> {{ booking.created_at|date:"d.m.Y H:i" }}</p></div>
+            </div>
+            
+            {% if booking.status == 'Мероприятие завершено' %}
+                <div class="review-section mt-3 pt-3 border-top">
+                    {% if booking.review %}
+                        <div>
+                            <h6>Ваш отзыв:</h6>
+                            <div class="review-rating mb-2">
+                                {% for i in "12345"|make_list %}
+                                    {% if forloop.counter <= booking.review.rating %}⭐{% else %}☆{% endif %}
+                                {% endfor %}
+                            </div>
+                            <p>{{ booking.review.comment }}</p>
+                        </div>
+                    {% else %}
+                        <button class="btn btn-sm btn-outline-primary btn-review-trigger" data-booking-id="{{ booking.id }}">
+                            ✍️ Оставить отзыв
+                        </button>
+                        <div class="review-form-container hidden mt-3" id="review-form-{{ booking.id }}">
+                            <h6>Оставить отзыв</h6>
+                            <form method="post" action="{% url 'bookings' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="review_booking_id" value="{{ booking.id }}">
+                                <div class="mb-3">
+                                    <label class="form-label">Оценка:</label>
+                                    {{ review_form.rating }}
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Комментарий:</label>
+                                    {{ review_form.comment }}
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-sm">Отправить отзыв</button>
+                                <button type="button" class="btn btn-secondary btn-sm btn-cancel-review" data-booking-id="{{ booking.id }}">Отмена</button>
+                            </form>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    {% endfor %}
+    
+    {% if bookings.has_other_pages %}
+        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if bookings.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ bookings.previous_page_number }}">«</a>
+                    </li>
+                {% endif %}
+                
+                {% for num in bookings.paginator.page_range %}
+                    <li class="page-item {% if bookings.number == num %}active{% endif %}">
+                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                    </li>
+                {% endfor %}
+                
+                {% if bookings.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ bookings.next_page_number }}">»</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+{% else %}
+    <div class="text-center py-5 fade-in-up">
+        <div class="display-1 mb-3">📭</div>
+        <h3>У вас пока нет бронирований</h3>
+        <p class="text-muted">Создайте первое бронирование</p>
+        <a href="{% url 'create_booking' %}" class="btn btn-primary">Создать бронирование</a>
+    </div>
+{% endif %}
+{% endblock %}

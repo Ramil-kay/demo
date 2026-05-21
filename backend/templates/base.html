@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>{% block title %}Конференции.РФ{% endblock %}</title>
+    
+    <!-- Локальный Bootstrap 5 CSS -->
+    {% load django_bootstrap5 %}
+    {% bootstrap_css %}
+    
+    <!-- Локальные шрифты -->
+    {% load static %}
+    <style>
+        @font-face {
+            font-family: 'Roboto';
+            src: url('{% static "fonts/Roboto-Regular.ttf" %}') format('truetype');
+            font-weight: 400;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Roboto';
+            src: url('{% static "fonts/Roboto-Light.ttf" %}') format('truetype');
+            font-weight: 300;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Roboto';
+            src: url('{% static "fonts/Roboto-Medium.ttf" %}') format('truetype');
+            font-weight: 500;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Roboto';
+            src: url('{% static "fonts/Roboto-Bold.ttf" %}') format('truetype');
+            font-weight: 700;
+            font-style: normal;
+        }
+    </style>
+    
+    <!-- Подключение отдельного CSS файла -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'index' %}">
+                <span class="brand-icon">🏛️</span>
+                <span class="brand-text">Конференции.РФ</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item"><span class="nav-link user-greeting">👋 Привет, {{ user.username }}</span></li>
+                        {% if user.username == 'Admin26' %}
+                            <li class="nav-item"><a class="nav-link" href="{% url 'admin_panel' %}">👑 Панель администратора</a></li>
+                        {% endif %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'bookings' %}">📋 Мои бронирования</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'create_booking' %}">➕ Новое бронирование</a></li>
+                        <li class="nav-item"><a class="nav-link logout-btn" href="{% url 'logout' %}">🚪 Выйти</a></li>
+                    {% else %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">🔐 Вход</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">📝 Регистрация</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="messages-container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <main class="container my-4">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Конференции.РФ - Бронирование помещений для конференций</p>
+        </div>
+    </footer>
+
+    <!-- Локальный Bootstrap 5 JS -->
+    {% bootstrap_javascript %}
+    
+    <!-- Подключение отдельных JS файлов -->
+    <script src="{% static 'js/slider.js' %}"></script>
+    <script src="{% static 'js/reviews.js' %}"></script>
+</body>
+</html>
